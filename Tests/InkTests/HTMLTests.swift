@@ -71,17 +71,17 @@ final class HTMLTests: XCTestCase {
         let html = MarkdownParser().html(from: """
         Hello
 
-        <img src="image.png"/>
+        <img src="image.png">
 
         World
         """)
 
-        XCTAssertEqual(html, #"<p>Hello</p><img src="image.png"/><p>World</p>"#)
+        XCTAssertEqual(html, #"<p>Hello</p><img src="image.png"><p>World</p>"#)
     }
 
     func testInlineSelfClosingHTMLElement() {
-        let html = MarkdownParser().html(from: #"Hello <img src="image.png"/> World"#)
-        XCTAssertEqual(html, #"<p>Hello <img src="image.png"/> World</p>"#)
+        let html = MarkdownParser().html(from: #"Hello <img src="image.png"> World"#)
+        XCTAssertEqual(html, #"<p>Hello <img src="image.png"> World</p>"#)
     }
 
     func testTopLevelHTMLLineBreak() {

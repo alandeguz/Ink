@@ -10,7 +10,7 @@ import Ink
 final class ImageTests: XCTestCase {
     func testImageWithURL() {
         let html = MarkdownParser().html(from: "![](url)")
-        XCTAssertEqual(html, #"<img src="url"/>"#)
+        XCTAssertEqual(html, #"<img src="url">"#)
     }
 
     func testImageWithReference() {
@@ -19,12 +19,12 @@ final class ImageTests: XCTestCase {
         [url]: https://swiftbysundell.com
         """)
 
-        XCTAssertEqual(html, #"<img src="https://swiftbysundell.com"/>"#)
+        XCTAssertEqual(html, #"<img src="https://swiftbysundell.com">"#)
     }
 
     func testImageWithURLAndAltText() {
         let html = MarkdownParser().html(from: "![Alt text](url)")
-        XCTAssertEqual(html, #"<img src="url" alt="Alt text"/>"#)
+        XCTAssertEqual(html, #"<img src="url" alt="Alt text">"#)
     }
 
     func testImageWithReferenceAndAltText() {
@@ -33,12 +33,12 @@ final class ImageTests: XCTestCase {
         [url]: swiftbysundell.com
         """)
 
-        XCTAssertEqual(html, #"<img src="swiftbysundell.com" alt="Alt text"/>"#)
+        XCTAssertEqual(html, #"<img src="swiftbysundell.com" alt="Alt text">"#)
     }
 
     func testImageWithinParagraph() {
         let html = MarkdownParser().html(from: "Text ![](url) text")
-        XCTAssertEqual(html, #"<p>Text <img src="url"/> text</p>"#)
+        XCTAssertEqual(html, #"<p>Text <img src="url"> text</p>"#)
     }
 }
 
