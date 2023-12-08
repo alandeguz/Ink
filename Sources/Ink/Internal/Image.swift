@@ -23,7 +23,7 @@ internal struct Image: Fragment {
             alt = " alt=\"\(alt)\""
         }
 
-        return "<img src=\"\(url)\"\(alt)/>"
+        return "<img src=\"\(url)\"\(alt)>"
     }
 
     func plainText() -> String {
