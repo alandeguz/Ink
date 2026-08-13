@@ -1,14 +1,15 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class HorizontalLineTests: XCTestCase {
-    func testHorizonalLineWithDashes() {
+struct HorizontalLineTests {
+    @Test func horizonalLineWithDashes() {
         let html = MarkdownParser().html(from: """
         Hello
 
@@ -17,15 +18,15 @@ final class HorizontalLineTests: XCTestCase {
         World
         """)
 
-        XCTAssertEqual(html, "<p>Hello</p><hr><p>World</p>")
+        #expect(html == "<p>Hello</p><hr><p>World</p>")
     }
 
-    func testHorizontalLineWithDashesAtTheStartOfString() {
+    @Test func horizontalLineWithDashesAtTheStartOfString() {
         let html = MarkdownParser().html(from: "---\nHello")
-        XCTAssertEqual(html, "<hr><p>Hello</p>")
+        #expect(html == "<hr><p>Hello</p>")
     }
 
-    func testHorizontalLineWithAsterisks() {
+    @Test func horizontalLineWithAsterisks() {
         let html = MarkdownParser().html(from: """
         Hello
 
@@ -34,16 +35,9 @@ final class HorizontalLineTests: XCTestCase {
         World
         """)
 
-        XCTAssertEqual(html, "<p>Hello</p><hr><p>World</p>")
+        #expect(html == "<p>Hello</p><hr><p>World</p>")
     }
 }
 
 extension HorizontalLineTests {
-    static var allTests: Linux.TestList<HorizontalLineTests> {
-        return [
-            ("testHorizonalLineWithDashes", testHorizonalLineWithDashes),
-            ("testHorizontalLineWithDashesAtTheStartOfString", testHorizontalLineWithDashesAtTheStartOfString),
-            ("testHorizontalLineWithAsterisks", testHorizontalLineWithAsterisks)
-        ]
-    }
 }

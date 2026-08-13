@@ -1,19 +1,20 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class CodeTests: XCTestCase {
-    func testInlineCode() {
+struct CodeTests {
+    @Test func inlineCode() {
         let html = MarkdownParser().html(from: "Hello `inline.code()`")
-        XCTAssertEqual(html, "<p>Hello <code>inline.code()</code></p>")
+        #expect(html == "<p>Hello <code>inline.code()</code></p>")
     }
 
-    func testCodeBlockWithJustBackticks() {
+    @Test func codeBlockWithJustBackticks() {
         let html = MarkdownParser().html(from: """
         ```
         code()
@@ -21,20 +22,20 @@ final class CodeTests: XCTestCase {
         ```
         """)
 
-        XCTAssertEqual(html, "<pre><code>code()\nblock()\n</code></pre>")
+        #expect(html == "<pre><code>code()\nblock()\n</code></pre>")
     }
 
-    func testCodeBlockWithBackticksAndLabel() {
+    @Test func codeBlockWithBackticksAndLabel() {
         let html = MarkdownParser().html(from: """
         ```swift
         code()
         ```
         """)
 
-        XCTAssertEqual(html, "<pre><code class=\"language-swift\">code()\n</code></pre>")
+        #expect(html == "<pre><code class=\"language-swift\">code()\n</code></pre>")
     }
     
-    func testCodeBlockWithBackticksAndLabelNeedingTrimming() {
+    @Test func codeBlockWithBackticksAndLabelNeedingTrimming() {
        // there are 2 spaces after the swift label that need trimming too
        let html = MarkdownParser().html(from: """
        ``` swift  
@@ -42,10 +43,10 @@ final class CodeTests: XCTestCase {
        ```
        """)
 
-       XCTAssertEqual(html, "<pre><code class=\"language-swift\">code()\n</code></pre>")
+       #expect(html == "<pre><code class=\"language-swift\">code()\n</code></pre>")
    }
     
-    func testCodeBlockManyBackticks() {
+    @Test func codeBlockManyBackticks() {
         // there are 2 spaces after the swift label that need trimming too
         let html = MarkdownParser().html(from: """
         
@@ -54,22 +55,22 @@ final class CodeTests: XCTestCase {
         ````````````````````````````````
         """)
 
-        XCTAssertEqual(html, "<pre><code class=\"language-foo\">bar\n</code></pre>")
+        #expect(html == "<pre><code class=\"language-foo\">bar\n</code></pre>")
     }
     
-    func testEncodingSpecialCharactersWithinCodeBlock() {
+    @Test func encodingSpecialCharactersWithinCodeBlock() {
         let html = MarkdownParser().html(from: """
         ```swift
         Generic<T>() && expression()
         ```
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <pre><code class="language-swift">Generic&lt;T&gt;() &amp;&amp; expression()\n</code></pre>
         """)
     }
 
-    func testIgnoringFormattingWithinCodeBlock() {
+    @Test func ignoringFormattingWithinCodeBlock() {
         let html = MarkdownParser().html(from: """
         ```
         # Not A Header
@@ -78,7 +79,7 @@ final class CodeTests: XCTestCase {
         ```
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <pre><code># Not A Header
         return View()
         - Not a list\n</code></pre>
@@ -87,15 +88,4 @@ final class CodeTests: XCTestCase {
 }
 
 extension CodeTests {
-    static var allTests: Linux.TestList<CodeTests> {
-        return [
-            ("testInlineCode", testInlineCode),
-            ("testCodeBlockWithJustBackticks", testCodeBlockWithJustBackticks),
-            ("testCodeBlockWithBackticksAndLabel", testCodeBlockWithBackticksAndLabel),
-            ("testCodeBlockWithBackticksAndLabelNeedingTrimming", testCodeBlockWithBackticksAndLabelNeedingTrimming),
-            ("testCodeBlockManyBackticks", testCodeBlockManyBackticks),
-            ("testEncodingSpecialCharactersWithinCodeBlock", testEncodingSpecialCharactersWithinCodeBlock),
-            ("testIgnoringFormattingWithinCodeBlock", testIgnoringFormattingWithinCodeBlock)
-        ]
-    }
 }

@@ -1,24 +1,25 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class HeadingTests: XCTestCase {
-    func testHeading() {
+struct HeadingTests {
+    @Test func heading() {
         let html = MarkdownParser().html(from: "# Hello, world!")
-        XCTAssertEqual(html, "<h1>Hello, world!</h1>")
+        #expect(html == "<h1>Hello, world!</h1>")
     }
 
-    func testHeadingsSeparatedBySingleNewline() {
+    @Test func headingsSeparatedBySingleNewline() {
         let html = MarkdownParser().html(from: "# Hello\n## World")
-        XCTAssertEqual(html, "<h1>Hello</h1><h2>World</h2>")
+        #expect(html == "<h1>Hello</h1><h2>World</h2>")
     }
 
-    func testHeadingsWithLeadingNumbers() {
+    @Test func headingsWithLeadingNumbers() {
         let html = MarkdownParser().html(from: """
         # 1. First
         ## 2. Second
@@ -26,51 +27,39 @@ final class HeadingTests: XCTestCase {
         ### 4. Forth
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <h1>1. First</h1><h2>2. Second</h2><h2>3. Third</h2><h3>4. Forth</h3>
         """)
     }
 
-    func testHeadingWithPreviousWhitespace() {
+    @Test func headingWithPreviousWhitespace() {
         let html = MarkdownParser().html(from: "Text \n## Heading")
-        XCTAssertEqual(html, "<p>Text</p><h2>Heading</h2>")
+        #expect(html == "<p>Text</p><h2>Heading</h2>")
     }
 
-    func testHeadingWithPreviousNewlineAndWhitespace() {
+    @Test func headingWithPreviousNewlineAndWhitespace() {
         let html = MarkdownParser().html(from: "Hello\n \n## Heading\n\nWorld")
-        XCTAssertEqual(html, "<p>Hello</p><h2>Heading</h2><p>World</p>")
+        #expect(html == "<p>Hello</p><h2>Heading</h2><p>World</p>")
     }
 
-    func testInvalidHeaderLevel() {
+    @Test func invalidHeaderLevel() {
         let markdown = String(repeating: "#", count: 7)
         let html = MarkdownParser().html(from: markdown)
-        XCTAssertEqual(html, "<p>\(markdown)</p>")
+        #expect(html == "<p>\(markdown)</p>")
     }
 
-    func testRemovingTrailingMarkersFromHeading() {
+    @Test func removingTrailingMarkersFromHeading() {
         let markdown = "# Heading #######"
         let html = MarkdownParser().html(from: markdown)
-        XCTAssertEqual(html, "<h1>Heading</h1>")
+        #expect(html == "<h1>Heading</h1>")
     }
 
-    func testHeadingWithOnlyTrailingMarkers() {
+    @Test func headingWithOnlyTrailingMarkers() {
         let markdown = "# #######"
         let html = MarkdownParser().html(from: markdown)
-        XCTAssertEqual(html, "<h1></h1>")
+        #expect(html == "<h1></h1>")
     }
 }
 
 extension HeadingTests {
-    static var allTests: Linux.TestList<HeadingTests> {
-        return [
-            ("testHeading", testHeading),
-            ("testHeadingsSeparatedBySingleNewline", testHeadingsSeparatedBySingleNewline),
-            ("testHeadingsWithLeadingNumbers", testHeadingsWithLeadingNumbers),
-            ("testHeadingWithPreviousWhitespace", testHeadingWithPreviousWhitespace),
-            ("testHeadingWithPreviousNewlineAndWhitespace", testHeadingWithPreviousNewlineAndWhitespace),
-            ("testInvalidHeaderLevel", testInvalidHeaderLevel),
-            ("testRemovingTrailingMarkersFromHeading", testRemovingTrailingMarkersFromHeading),
-            ("testHeadingWithOnlyTrailingMarkers", testHeadingWithOnlyTrailingMarkers)
-        ]
-    }
 }

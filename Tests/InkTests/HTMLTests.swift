@@ -1,14 +1,15 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class HTMLTests: XCTestCase {
-    func testTopLevelHTML() {
+struct HTMLTests {
+    @Test func topLevelHTML() {
         let html = MarkdownParser().html(from: """
         Hello
 
@@ -19,14 +20,14 @@ final class HTMLTests: XCTestCase {
         World
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <p>Hello</p><div>
             <span class="text">Whole wide</span>
         </div><p>World</p>
         """)
     }
 
-    func testNestedTopLevelHTML() {
+    @Test func nestedTopLevelHTML() {
         let html = MarkdownParser().html(from: """
         <div>
             <div>Hello</div>
@@ -34,7 +35,7 @@ final class HTMLTests: XCTestCase {
         </div>
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <div>
             <div>Hello</div>
             <div>World</div>
@@ -42,32 +43,32 @@ final class HTMLTests: XCTestCase {
         """)
     }
 
-    func testTopLevelHTMLWithPreviousNewline() {
+    @Test func topLevelHTMLWithPreviousNewline() {
         let html = MarkdownParser().html(from: "Text\n<h2>Heading</h2>")
-        XCTAssertEqual(html, "<p>Text</p><h2>Heading</h2>")
+        #expect(html == "<p>Text</p><h2>Heading</h2>")
     }
 
-    func testIgnoringFormattingWithinTopLevelHTML() {
+    @Test func ignoringFormattingWithinTopLevelHTML() {
         let html = MarkdownParser().html(from: "<div>_Hello_</div>")
-        XCTAssertEqual(html, "<div>_Hello_</div>")
+        #expect(html == "<div>_Hello_</div>")
     }
 
-    func testIgnoringTextFormattingWithinInlineHTML() {
+    @Test func ignoringTextFormattingWithinInlineHTML() {
         let html = MarkdownParser().html(from: "Hello <span>_World_</span>")
-        XCTAssertEqual(html, "<p>Hello <span>_World_</span></p>")
+        #expect(html == "<p>Hello <span>_World_</span></p>")
     }
 
-    func testIgnoringListsWithinInlineHTML() {
+    @Test func ignoringListsWithinInlineHTML() {
         let html = MarkdownParser().html(from: "<h2>1. Hello</h2><h2>- World</h2>")
-        XCTAssertEqual(html, "<h2>1. Hello</h2><h2>- World</h2>")
+        #expect(html == "<h2>1. Hello</h2><h2>- World</h2>")
     }
 
-    func testInlineParagraphTagEndingCurrentParagraph() {
+    @Test func inlineParagraphTagEndingCurrentParagraph() {
         let html = MarkdownParser().html(from: "One <p>Two</p> Three")
-        XCTAssertEqual(html, "<p>One</p><p>Two</p><p>Three</p>")
+        #expect(html == "<p>One</p><p>Two</p><p>Three</p>")
     }
 
-    func testTopLevelSelfClosingHTMLElement() {
+    @Test func topLevelSelfClosingHTMLElement() {
         let html = MarkdownParser().html(from: """
         Hello
 
@@ -76,58 +77,42 @@ final class HTMLTests: XCTestCase {
         World
         """)
 
-        XCTAssertEqual(html, #"<p>Hello</p><img src="image.png"/><p>World</p>"#)
+        #expect(html == #"<p>Hello</p><img src="image.png"/><p>World</p>"#)
     }
 
-    func testInlineSelfClosingHTMLElement() {
+    @Test func inlineSelfClosingHTMLElement() {
         let html = MarkdownParser().html(from: #"Hello <img src="image.png"/> World"#)
-        XCTAssertEqual(html, #"<p>Hello <img src="image.png"/> World</p>"#)
+        #expect(html == #"<p>Hello <img src="image.png"/> World</p>"#)
     }
 
-    func testTopLevelHTMLLineBreak() {
+    @Test func topLevelHTMLLineBreak() {
         let html = MarkdownParser().html(from: """
         Hello
         <br/>
         World
         """)
 
-        XCTAssertEqual(html, "<p>Hello</p><br/><p>World</p>")
+        #expect(html == "<p>Hello</p><br/><p>World</p>")
     }
 
-    func testHTMLComment() {
+    @Test func htmlComment() {
         let html = MarkdownParser().html(from: """
         Hello
         <!-- Comment -->
         World
         """)
 
-        XCTAssertEqual(html, "<p>Hello</p><!-- Comment --><p>World</p>")
+        #expect(html == "<p>Hello</p><!-- Comment --><p>World</p>")
     }
 
-    func testHTMLEntities() {
+    @Test func htmlEntities() {
         let html = MarkdownParser().html(from: """
         Hello &amp; welcome to &lt;Ink&gt;
         """)
 
-        XCTAssertEqual(html, "<p>Hello &amp; welcome to &lt;Ink&gt;</p>")
+        #expect(html == "<p>Hello &amp; welcome to &lt;Ink&gt;</p>")
     }
 }
 
 extension HTMLTests {
-    static var allTests: Linux.TestList<HTMLTests> {
-        return [
-            ("testTopLevelHTML", testTopLevelHTML),
-            ("testNestedTopLevelHTML", testNestedTopLevelHTML),
-            ("testTopLevelHTMLWithPreviousNewline", testTopLevelHTMLWithPreviousNewline),
-            ("testIgnoringFormattingWithinTopLevelHTML", testIgnoringFormattingWithinTopLevelHTML),
-            ("testIgnoringTextFormattingWithinInlineHTML", testIgnoringTextFormattingWithinInlineHTML),
-            ("testIgnoringListsWithinInlineHTML", testIgnoringListsWithinInlineHTML),
-            ("testInlineParagraphTagEndingCurrentParagraph", testInlineParagraphTagEndingCurrentParagraph),
-            ("testTopLevelSelfClosingHTMLElement", testTopLevelSelfClosingHTMLElement),
-            ("testInlineSelfClosingHTMLElement", testInlineSelfClosingHTMLElement),
-            ("testTopLevelHTMLLineBreak", testTopLevelHTMLLineBreak),
-            ("testHTMLComment", testHTMLComment),
-            ("testHTMLEntities", testHTMLEntities)
-        ]
-    }
 }

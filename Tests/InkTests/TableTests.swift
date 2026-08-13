@@ -4,17 +4,17 @@
  *  MIT license, see LICENSE file for details
  */
 
-import XCTest
+import Testing
 import Ink
 
-final class TableTests: XCTestCase {
-    func testTableWithoutHeader() {
+struct TableTests {
+    @Test func tableWithoutHeader() {
         let html = MarkdownParser().html(from: """
         | HeaderA | HeaderB |
         | CellA   | CellB   |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table><tbody>\
         <tr><td>HeaderA</td><td>HeaderB</td></tr>\
         <tr><td>CellA</td><td>CellB</td></tr>\
@@ -22,7 +22,7 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testTableWithHeader() {
+    @Test func tableWithHeader() {
         let html = MarkdownParser().html(from: """
         | HeaderA | HeaderB | HeaderC |
         | ------- | ------- | ------- |
@@ -30,7 +30,7 @@ final class TableTests: XCTestCase {
         | CellA2  | CellB2  | CellC2  |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table>\
         <thead><tr><th>HeaderA</th><th>HeaderB</th><th>HeaderC</th></tr></thead>\
         <tbody>\
@@ -41,7 +41,7 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testTableWithUnalignedColumns() {
+    @Test func tableWithUnalignedColumns() {
         let html = MarkdownParser().html(from: """
         | HeaderA                        | HeaderB    | HeaderC |
         | ------------------------------ | ----------- | ------------ |
@@ -49,7 +49,7 @@ final class TableTests: XCTestCase {
         | CellA2                   | CellB2       | CellC2        |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table>\
         <thead><tr><th>HeaderA</th><th>HeaderB</th><th>HeaderC</th></tr></thead>\
         <tbody>\
@@ -60,38 +60,38 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testTableWithOnlyHeader() {
+    @Test func tableWithOnlyHeader() {
         let html = MarkdownParser().html(from: """
         | HeaderA   | HeaderB   | HeaderC |
         | ----------| ----------| ------- |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table>\
         <thead><tr><th>HeaderA</th><th>HeaderB</th><th>HeaderC</th></tr></thead>\
         </table>
         """)
     }
 
-    func testIncompleteTable() {
+    @Test func incompleteTable() {
         let html = MarkdownParser().html(from: """
         | one | two |
         | three |
         | four | five | six
         """)
 
-        XCTAssertEqual(html, "<p>| one | two | | three | | four | five | six</p>")
+        #expect(html == "<p>| one | two | | three | | four | five | six</p>")
     }
 
-    func testInvalidTable() {
+    @Test func invalidTable() {
         let html = MarkdownParser().html(from: """
         |123 Not a table
         """)
 
-        XCTAssertEqual(html, "<p>|123 Not a table</p>")
+        #expect(html == "<p>|123 Not a table</p>")
     }
 
-    func testTableBetweenParagraphs() {
+    @Test func tableBetweenParagraphs() {
         let html = MarkdownParser().html(from: """
         A paragraph.
 
@@ -101,7 +101,7 @@ final class TableTests: XCTestCase {
         Another paragraph.
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <p>A paragraph.</p>\
         <table><tbody>\
         <tr><td>A</td><td>B</td></tr><tr><td>C</td><td>D</td></tr>\
@@ -110,7 +110,7 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testTableWithUnevenColumns() {
+    @Test func tableWithUnevenColumns() {
         let html = MarkdownParser().html(from: """
         | one | two |
         | three | four | five |
@@ -119,7 +119,7 @@ final class TableTests: XCTestCase {
         | three |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table><tbody>\
         <tr><td>one</td><td>two</td><td></td></tr>\
         <tr><td>three</td><td>four</td><td>five</td></tr>\
@@ -131,7 +131,7 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testTableWithInternalMarkdown() {
+    @Test func tableWithInternalMarkdown() {
         let html = MarkdownParser().html(from: """
         | Table  | Header     | [Link](/uri) |
         | ------ | ---------- | ------------ |
@@ -139,7 +139,7 @@ final class TableTests: XCTestCase {
         | `code` | in         | table        |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table>\
         <thead>\
         <tr><th>Table</th><th>Header</th><th><a href="/uri">Link</a></th></tr>\
@@ -152,14 +152,14 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testTableWithAlignment() {
+    @Test func tableWithAlignment() {
         let html = MarkdownParser().html(from: """
         | Left | Center | Right |
         | :- | :-: | -:|
         | One | Two | Three |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table>\
         <thead><tr>\
         <th align="left">Left</th><th align="center">Center</th><th align="right">Right</th>\
@@ -171,7 +171,7 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testMissingPipeEndsTable() {
+    @Test func missingPipeEndsTable() {
         let html = MarkdownParser().html(from: """
         | HeaderA | HeaderB |
         | ------- | ------- |
@@ -179,7 +179,7 @@ final class TableTests: XCTestCase {
         > Quote
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table>\
         <thead><tr><th>HeaderA</th><th>HeaderB</th></tr></thead>\
         <tbody><tr><td>CellA</td><td>CellB</td></tr></tbody>\
@@ -188,14 +188,14 @@ final class TableTests: XCTestCase {
         """)
     }
 
-    func testHeaderNotParsedForColumnCountMismatch() {
+    @Test func headerNotParsedForColumnCountMismatch() {
         let html = MarkdownParser().html(from: """
         | HeaderA | HeaderB |
         | ------- |
         | CellA   | CellB |
         """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
         <table><tbody>\
         <tr><td>HeaderA</td><td>HeaderB</td></tr>\
         <tr><td>-------</td><td></td></tr>\
@@ -206,20 +206,4 @@ final class TableTests: XCTestCase {
 }
 
 extension TableTests {
-    static var allTests: Linux.TestList<TableTests> {
-        return [
-            ("testTableWithoutHeader", testTableWithoutHeader),
-            ("testTableWithHeader", testTableWithHeader),
-            ("testTableWithUnalignedColumns", testTableWithUnalignedColumns),
-            ("testTableWithOnlyHeader", testTableWithOnlyHeader),
-            ("testIncompleteTable", testIncompleteTable),
-            ("testInvalidTable", testInvalidTable),
-            ("testTableBetweenParagraphs", testTableBetweenParagraphs),
-            ("testTableWithUnevenColumns", testTableWithUnevenColumns),
-            ("testTableWithInternalMarkdown", testTableWithInternalMarkdown),
-            ("testTableWithAlignment", testTableWithAlignment),
-            ("testMissingPipeEndsTable", testMissingPipeEndsTable),
-            ("testHeaderNotParsedForColumnCountMismatch", testHeaderNotParsedForColumnCountMismatch),
-        ]
-    }
 }

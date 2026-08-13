@@ -1,55 +1,47 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class ImageTests: XCTestCase {
-    func testImageWithURL() {
+struct ImageTests {
+    @Test func imageWithURL() {
         let html = MarkdownParser().html(from: "![](url)")
-        XCTAssertEqual(html, #"<img src="url">"#)
+        #expect(html == #"<img src="url">"#)
     }
 
-    func testImageWithReference() {
+    @Test func imageWithReference() {
         let html = MarkdownParser().html(from: """
         ![][url]
         [url]: https://swiftbysundell.com
         """)
 
-        XCTAssertEqual(html, #"<img src="https://swiftbysundell.com">"#)
+        #expect(html == #"<img src="https://swiftbysundell.com">"#)
     }
 
-    func testImageWithURLAndAltText() {
+    @Test func imageWithURLAndAltText() {
         let html = MarkdownParser().html(from: "![Alt text](url)")
-        XCTAssertEqual(html, #"<img src="url" alt="Alt text">"#)
+        #expect(html == #"<img src="url" alt="Alt text">"#)
     }
 
-    func testImageWithReferenceAndAltText() {
+    @Test func imageWithReferenceAndAltText() {
         let html = MarkdownParser().html(from: """
         ![Alt text][url]
         [url]: swiftbysundell.com
         """)
 
-        XCTAssertEqual(html, #"<img src="swiftbysundell.com" alt="Alt text">"#)
+        #expect(html == #"<img src="swiftbysundell.com" alt="Alt text">"#)
     }
 
-    func testImageWithinParagraph() {
+    @Test func imageWithinParagraph() {
         let html = MarkdownParser().html(from: "Text ![](url) text")
-        XCTAssertEqual(html, #"<p>Text <img src="url"> text</p>"#)
+        #expect(html == #"<p>Text <img src="url"> text</p>"#)
     }
 }
 
 extension ImageTests {
-    static var allTests: Linux.TestList<ImageTests> {
-        return [
-            ("testImageWithURL", testImageWithURL),
-            ("testImageWithReference", testImageWithReference),
-            ("testImageWithURLAndAltText", testImageWithURLAndAltText),
-            ("testImageWithReferenceAndAltText", testImageWithReferenceAndAltText),
-            ("testImageWithinParagraph", testImageWithinParagraph)
-        ]
-    }
 }

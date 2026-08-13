@@ -1,20 +1,21 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class ListTests: XCTestCase {
-    func testOrderedList() {
+struct ListTests {
+    @Test func orderedList() {
         let html = MarkdownParser().html(from: """
         1. One
         2. Two
         """)
 
-        XCTAssertEqual(html, #"<ol><li>One</li><li>Two</li></ol>"#)
+        #expect(html == #"<ol><li>One</li><li>Two</li></ol>"#)
     }
     
     func test10DigitOrderedList() {
@@ -22,49 +23,49 @@ final class ListTests: XCTestCase {
         1234567890. Not a list
         """)
 
-        XCTAssertEqual(html, "<p>1234567890. Not a list</p>")
+        #expect(html == "<p>1234567890. Not a list</p>")
     }
     
-    func testOrderedListParentheses() {
+    @Test func orderedListParentheses() {
         let html = MarkdownParser().html(from: """
         1) One
         2) Two
         """)
 
-        XCTAssertEqual(html, #"<ol><li>One</li><li>Two</li></ol>"#)
+        #expect(html == #"<ol><li>One</li><li>Two</li></ol>"#)
     }
 
-    func testOrderedListWithoutIncrementedNumbers() {
+    @Test func orderedListWithoutIncrementedNumbers() {
         let html = MarkdownParser().html(from: """
         1. One
         3. Two
         17. Three
         """)
 
-        XCTAssertEqual(html, "<ol><li>One</li><li>Two</li><li>Three</li></ol>")
+        #expect(html == "<ol><li>One</li><li>Two</li><li>Three</li></ol>")
     }
 
-    func testOrderedListWithInvalidNumbers() {
+    @Test func orderedListWithInvalidNumbers() {
         let html = MarkdownParser().html(from: """
         1. One
         3!. Two
         17. Three
         """)
 
-        XCTAssertEqual(html, "<ol><li>One 3!. Two</li><li>Three</li></ol>")
+        #expect(html == "<ol><li>One 3!. Two</li><li>Three</li></ol>")
     }
 
-    func testUnorderedList() {
+    @Test func unorderedList() {
         let html = MarkdownParser().html(from: """
         - One
         - Two
         - Three
         """)
 
-        XCTAssertEqual(html, "<ul><li>One</li><li>Two</li><li>Three</li></ul>")
+        #expect(html == "<ul><li>One</li><li>Two</li><li>Three</li></ul>")
     }
     
-    func testMixedUnorderedList() {
+    @Test func mixedUnorderedList() {
         let html = MarkdownParser().html(from: """
         - One
         * Two
@@ -72,10 +73,10 @@ final class ListTests: XCTestCase {
         - Four
         """)
 
-        XCTAssertEqual(html, "<ul><li>One</li></ul><ul><li>Two</li><li>Three</li></ul><ul><li>Four</li></ul>")
+        #expect(html == "<ul><li>One</li></ul><ul><li>Two</li><li>Three</li></ul><ul><li>Four</li></ul>")
     }
     
-    func testMixedList() {
+    @Test func mixedList() {
         let html = MarkdownParser().html(from: """
         1. One
         2. Two
@@ -83,20 +84,20 @@ final class ListTests: XCTestCase {
         * Four
         """)
         
-        XCTAssertEqual(html, #"<ol><li>One</li><li>Two</li></ol><ol start="3"><li>Three</li></ol><ul><li>Four</li></ul>"#)
+        #expect(html == #"<ol><li>One</li><li>Two</li></ol><ol start="3"><li>Three</li></ol><ul><li>Four</li></ul>"#)
     }
 
-    func testUnorderedListWithMultiLineItem() {
+    @Test func unorderedListWithMultiLineItem() {
         let html = MarkdownParser().html(from: """
         - One
         Some text
         - Two
         """)
 
-        XCTAssertEqual(html, "<ul><li>One Some text</li><li>Two</li></ul>")
+        #expect(html == "<ul><li>One Some text</li><li>Two</li></ul>")
     }
 
-    func testUnorderedListWithNestedList() {
+    @Test func unorderedListWithNestedList() {
         let html = MarkdownParser().html(from: """
         - A
         - B
@@ -121,55 +122,38 @@ final class ListTests: XCTestCase {
             "</ul>"
         ]
 
-        XCTAssertEqual(html, expectedComponents.joined())
+        #expect(html == expectedComponents.joined())
     }
 
-    func testUnorderedListWithInvalidMarker() {
+    @Test func unorderedListWithInvalidMarker() {
         let html = MarkdownParser().html(from: """
         - One
         -Two
         - Three
         """)
 
-        XCTAssertEqual(html, "<ul><li>One -Two</li><li>Three</li></ul>")
+        #expect(html == "<ul><li>One -Two</li><li>Three</li></ul>")
     }
     
-    func testOrderedIndentedList() {
+    @Test func orderedIndentedList() {
         let html = MarkdownParser().html(from: """
           1. One
           2. Two
         """)
 
-        XCTAssertEqual(html, #"<ol><li>One</li><li>Two</li></ol>"#)
+        #expect(html == #"<ol><li>One</li><li>Two</li></ol>"#)
     }
     
-    func testUnorderedIndentedList() {
+    @Test func unorderedIndentedList() {
         let html = MarkdownParser().html(from: """
           - One
           - Two
           - Three
         """)
 
-        XCTAssertEqual(html, "<ul><li>One</li><li>Two</li><li>Three</li></ul>")
+        #expect(html == "<ul><li>One</li><li>Two</li><li>Three</li></ul>")
     }
 }
 
 extension ListTests {
-    static var allTests: Linux.TestList<ListTests> {
-        return [
-            ("testOrderedList", testOrderedList),
-            ("test10DigitOrderedList", test10DigitOrderedList),
-            ("testOrderedListParentheses", testOrderedListParentheses),
-            ("testOrderedListWithoutIncrementedNumbers", testOrderedListWithoutIncrementedNumbers),
-            ("testOrderedListWithInvalidNumbers", testOrderedListWithInvalidNumbers),
-            ("testUnorderedList", testUnorderedList),
-            ("testMixedUnorderedList", testMixedUnorderedList),
-            ("testMixedList", testMixedList),
-            ("testUnorderedListWithMultiLineItem", testUnorderedListWithMultiLineItem),
-            ("testUnorderedListWithNestedList", testUnorderedListWithNestedList),
-            ("testUnorderedListWithInvalidMarker", testUnorderedListWithInvalidMarker),
-            ("testOrderedIndentedList", testUnorderedIndentedList),
-            ("testUnorderedIndentedList", testUnorderedIndentedList),
-        ]
-    }
 }

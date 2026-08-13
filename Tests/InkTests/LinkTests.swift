@@ -1,29 +1,30 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class LinkTests: XCTestCase {
-    func testLinkWithURL() {
+struct LinkTests {
+    @Test func linkWithURL() {
         let html = MarkdownParser().html(from: "[Title](url)")
-        XCTAssertEqual(html, #"<p><a href="url">Title</a></p>"#)
+        #expect(html == #"<p><a href="url">Title</a></p>"#)
     }
 
-    func testLinkWithReference() {
+    @Test func linkWithReference() {
         let html = MarkdownParser().html(from: """
         [Title][url]
 
         [url]: swiftbysundell.com
         """)
 
-        XCTAssertEqual(html, #"<p><a href="swiftbysundell.com">Title</a></p>"#)
+        #expect(html == #"<p><a href="swiftbysundell.com">Title</a></p>"#)
     }
 
-    func testCaseMismatchedLinkWithReference() {
+    @Test func caseMismatchedLinkWithReference() {
         let html = MarkdownParser().html(from: """
         [Title][Foo]
         [Title][αγω]
@@ -32,75 +33,59 @@ final class LinkTests: XCTestCase {
         [ΑΓΩ]: /φου
         """)
 
-        XCTAssertEqual(html, #"<p><a href="/url">Title</a> <a href="/φου">Title</a></p>"#)
+        #expect(html == #"<p><a href="/url">Title</a> <a href="/φου">Title</a></p>"#)
     }
 
-    func testNumericLinkWithReference() {
+    @Test func numericLinkWithReference() {
         let html = MarkdownParser().html(from: """
         [1][1]
 
         [1]: swiftbysundell.com
         """)
 
-        XCTAssertEqual(html, #"<p><a href="swiftbysundell.com">1</a></p>"#)
+        #expect(html == #"<p><a href="swiftbysundell.com">1</a></p>"#)
     }
 
-    func testBoldLinkWithInternalMarkers() {
+    @Test func boldLinkWithInternalMarkers() {
         let html = MarkdownParser().html(from: "[**Hello**](/hello)")
-        XCTAssertEqual(html, #"<p><a href="/hello"><strong>Hello</strong></a></p>"#)
+        #expect(html == #"<p><a href="/hello"><strong>Hello</strong></a></p>"#)
     }
 
-    func testBoldLinkWithExternalMarkers() {
+    @Test func boldLinkWithExternalMarkers() {
         let html = MarkdownParser().html(from: "**[Hello](/hello)**")
-        XCTAssertEqual(html, #"<p><strong><a href="/hello">Hello</a></strong></p>"#)
+        #expect(html == #"<p><strong><a href="/hello">Hello</a></strong></p>"#)
     }
 
-    func testLinkWithUnderscores() {
+    @Test func linkWithUnderscores() {
         let html = MarkdownParser().html(from: "[He_llo](/he_llo)")
-        XCTAssertEqual(html, "<p><a href=\"/he_llo\">He_llo</a></p>")
+        #expect(html == "<p><a href=\"/he_llo\">He_llo</a></p>")
     }
 
-    func testLinkWithParenthesis() {
+    @Test func linkWithParenthesis() {
         let html = MarkdownParser().html(from: "[Hello](/(hello))")
-        XCTAssertEqual(html, "<p><a href=\"/(hello)\">Hello</a></p>")
+        #expect(html == "<p><a href=\"/(hello)\">Hello</a></p>")
     }
 
-    func testLinkWithNestedParenthesis() {
+    @Test func linkWithNestedParenthesis() {
         let html = MarkdownParser().html(from: "[Hello](/(h(e(l(l(o()))))))")
-        XCTAssertEqual(html, "<p><a href=\"/(h(e(l(l(o())))))\">Hello</a></p>")
+        #expect(html == "<p><a href=\"/(h(e(l(l(o())))))\">Hello</a></p>")
     }
 
-    func testLinkWithParenthesisAndClosingParenthesisInContent() {
+    @Test func linkWithParenthesisAndClosingParenthesisInContent() {
         let html = MarkdownParser().html(from: "[Hello](/(hello)))")
-        XCTAssertEqual(html, "<p><a href=\"/(hello)\">Hello</a>)</p>")
+        #expect(html == "<p><a href=\"/(hello)\">Hello</a>)</p>")
     }
 
-    func testUnterminatedLink() {
+    @Test func unterminatedLink() {
         let html = MarkdownParser().html(from: "[Hello]")
-        XCTAssertEqual(html, "<p>[Hello]</p>")
+        #expect(html == "<p>[Hello]</p>")
     }
     
-    func testLinkWithEscapedSquareBrackets() {
+    @Test func linkWithEscapedSquareBrackets() {
         let html = MarkdownParser().html(from: "[\\[Hello\\]](hello)")
-        XCTAssertEqual(html, #"<p><a href="hello">[Hello]</a></p>"#)
+        #expect(html == #"<p><a href="hello">[Hello]</a></p>"#)
     }
 }
 
 extension LinkTests {
-    static var allTests: Linux.TestList<LinkTests> {
-        return [
-            ("testLinkWithURL", testLinkWithURL),
-            ("testLinkWithReference", testLinkWithReference),
-            ("testCaseMismatchedLinkWithReference", testCaseMismatchedLinkWithReference),
-            ("testNumericLinkWithReference", testNumericLinkWithReference),
-            ("testBoldLinkWithInternalMarkers", testBoldLinkWithInternalMarkers),
-            ("testBoldLinkWithExternalMarkers", testBoldLinkWithExternalMarkers),
-            ("testLinkWithUnderscores", testLinkWithUnderscores),
-            ("testLinkWithParenthesis", testLinkWithParenthesis),
-            ("testLinkWithNestedParenthesis", testLinkWithNestedParenthesis),
-            ("testLinkWithParenthesisAndClosingParenthesisInContent", testLinkWithParenthesisAndClosingParenthesisInContent),
-            ("testUnterminatedLink", testUnterminatedLink),
-            ("testLinkWithEscapedSquareBrackets", testLinkWithEscapedSquareBrackets)
-        ]
-    }
 }

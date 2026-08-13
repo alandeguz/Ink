@@ -1,210 +1,178 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class TextFormattingTests: XCTestCase {
-    func testParagraph() {
+struct TextFormattingTests {
+    @Test func paragraph() {
         let html = MarkdownParser().html(from: "Hello, world!")
-        XCTAssertEqual(html, "<p>Hello, world!</p>")
+        #expect(html == "<p>Hello, world!</p>")
     }
 
-    func testParagraphs() {
+    @Test func paragraphs() {
         let html = MarkdownParser().html(from: "Hello, world!\n\nAgain.")
-        XCTAssertEqual(html, "<p>Hello, world!</p><p>Again.</p>")
+        #expect(html == "<p>Hello, world!</p><p>Again.</p>")
     }
 
-    func testDosParagraphs() {
+    @Test func dosParagraphs() {
         let html = MarkdownParser().html(from: "Hello, world!\r\n\r\nAgain.")
-        XCTAssertEqual(html, "<p>Hello, world!</p><p>Again.</p>")
+        #expect(html == "<p>Hello, world!</p><p>Again.</p>")
     }
 
-    func testItalicText() {
+    @Test func italicText() {
         let html = MarkdownParser().html(from: "Hello, *world*!")
-        XCTAssertEqual(html, "<p>Hello, <em>world</em>!</p>")
+        #expect(html == "<p>Hello, <em>world</em>!</p>")
     }
 
-    func testBoldText() {
+    @Test func boldText() {
         let html = MarkdownParser().html(from: "Hello, **world**!")
-        XCTAssertEqual(html, "<p>Hello, <strong>world</strong>!</p>")
+        #expect(html == "<p>Hello, <strong>world</strong>!</p>")
     }
 
-    func testItalicBoldText() {
+    @Test func italicBoldText() {
         let html = MarkdownParser().html(from: "Hello, ***world***!")
-        XCTAssertEqual(html, "<p>Hello, <strong><em>world</em></strong>!</p>")
+        #expect(html == "<p>Hello, <strong><em>world</em></strong>!</p>")
     }
 
-    func testItalicBoldTextWithSeparateStartMarkers() {
+    @Test func italicBoldTextWithSeparateStartMarkers() {
         let html = MarkdownParser().html(from: "**Hello, *world***!")
-        XCTAssertEqual(html, "<p><strong>Hello, <em>world</em></strong>!</p>")
+        #expect(html == "<p><strong>Hello, <em>world</em></strong>!</p>")
     }
 
-    func testItalicTextWithinBoldText() {
+    @Test func italicTextWithinBoldText() {
         let html = MarkdownParser().html(from: "**Hello, *world*!**")
-        XCTAssertEqual(html, "<p><strong>Hello, <em>world</em>!</strong></p>")
+        #expect(html == "<p><strong>Hello, <em>world</em>!</strong></p>")
     }
 
-    func testBoldTextWithinItalicText() {
+    @Test func boldTextWithinItalicText() {
         let html = MarkdownParser().html(from: "*Hello, **world**!*")
-        XCTAssertEqual(html, "<p><em>Hello, <strong>world</strong>!</em></p>")
+        #expect(html == "<p><em>Hello, <strong>world</strong>!</em></p>")
     }
 
-    func testItalicTextWithExtraLeadingMarkers() {
+    @Test func italicTextWithExtraLeadingMarkers() {
         let html = MarkdownParser().html(from: "**Hello*")
-        XCTAssertEqual(html, "<p>*<em>Hello</em></p>")
+        #expect(html == "<p>*<em>Hello</em></p>")
     }
 
-    func testBoldTextWithExtraLeadingMarkers() {
+    @Test func boldTextWithExtraLeadingMarkers() {
         let html = MarkdownParser().html(from: "***Hello**")
-        XCTAssertEqual(html, "<p><strong>*Hello</strong></p>")
+        #expect(html == "<p><strong>*Hello</strong></p>")
     }
 
-    func testItalicTextWithExtraTrailingMarkers() {
+    @Test func italicTextWithExtraTrailingMarkers() {
         let html = MarkdownParser().html(from: "*Hello**")
-        XCTAssertEqual(html, "<p><em>Hello</em>*</p>")
+        #expect(html == "<p><em>Hello</em>*</p>")
     }
 
-    func testBoldTextWithExtraTrailingMarkers() {
+    @Test func boldTextWithExtraTrailingMarkers() {
         let html = MarkdownParser().html(from: "**Hello***")
-        XCTAssertEqual(html, "<p><strong>Hello</strong>*</p>")
+        #expect(html == "<p><strong>Hello</strong>*</p>")
     }
 
-    func testItalicBoldTextWithExtraTrailingMarkers() {
+    @Test func italicBoldTextWithExtraTrailingMarkers() {
         let html = MarkdownParser().html(from: "**Hello, *world*****!")
-        XCTAssertEqual(html, "<p><strong>Hello, <em>world</em></strong>**!</p>")
+        #expect(html == "<p><strong>Hello, <em>world</em></strong>**!</p>")
     }
 
-    func testUnterminatedItalicMarker() {
+    @Test func unterminatedItalicMarker() {
         let html = MarkdownParser().html(from: "*Hello")
-        XCTAssertEqual(html, "<p>*Hello</p>")
+        #expect(html == "<p>*Hello</p>")
     }
 
-    func testUnterminatedBoldMarker() {
+    @Test func unterminatedBoldMarker() {
         let html = MarkdownParser().html(from: "**Hello")
-        XCTAssertEqual(html, "<p>**Hello</p>")
+        #expect(html == "<p>**Hello</p>")
     }
 
-    func testUnterminatedItalicBoldMarker() {
+    @Test func unterminatedItalicBoldMarker() {
         let html = MarkdownParser().html(from: "***Hello")
-        XCTAssertEqual(html, "<p>***Hello</p>")
+        #expect(html == "<p>***Hello</p>")
     }
 
-    func testUnterminatedItalicMarkerWithinBoldText() {
+    @Test func unterminatedItalicMarkerWithinBoldText() {
         let html = MarkdownParser().html(from: "**Hello, *world!**")
-        XCTAssertEqual(html, "<p><strong>Hello, *world!</strong></p>")
+        #expect(html == "<p><strong>Hello, *world!</strong></p>")
     }
 
-    func testUnterminatedBoldMarkerWithinItalicText() {
+    @Test func unterminatedBoldMarkerWithinItalicText() {
         let html = MarkdownParser().html(from: "*Hello, **world!*")
-        XCTAssertEqual(html, "<p><em>Hello, **world!</em></p>")
+        #expect(html == "<p><em>Hello, **world!</em></p>")
     }
 
-    func testStrikethroughText() {
+    @Test func strikethroughText() {
         let html = MarkdownParser().html(from: "Hello, ~~world!~~")
-        XCTAssertEqual(html, "<p>Hello, <s>world!</s></p>")
+        #expect(html == "<p>Hello, <s>world!</s></p>")
     }
 
-    func testSingleTildeWithinStrikethroughText() {
+    @Test func singleTildeWithinStrikethroughText() {
         let html = MarkdownParser().html(from: "Hello, ~~wor~ld!~~")
-        XCTAssertEqual(html, "<p>Hello, <s>wor~ld!</s></p>")
+        #expect(html == "<p>Hello, <s>wor~ld!</s></p>")
     }
 
-    func testUnterminatedStrikethroughMarker() {
+    @Test func unterminatedStrikethroughMarker() {
         let html = MarkdownParser().html(from: "~~Hello")
-        XCTAssertEqual(html, "<p>~~Hello</p>")
+        #expect(html == "<p>~~Hello</p>")
     }
 
-    func testEncodingSpecialCharacters() {
+    @Test func encodingSpecialCharacters() {
         let html = MarkdownParser().html(from: "Hello < World & >")
-        XCTAssertEqual(html, "<p>Hello &lt; World &amp; &gt;</p>")
+        #expect(html == "<p>Hello &lt; World &amp; &gt;</p>")
     }
 
-    func testSingleLineBlockquote() {
+    @Test func singleLineBlockquote() {
         let html = MarkdownParser().html(from: "> Hello, world!")
-        XCTAssertEqual(html, "<blockquote><p>Hello, world!</p></blockquote>")
+        #expect(html == "<blockquote><p>Hello, world!</p></blockquote>")
     }
 
-    func testMultiLineBlockquote() {
+    @Test func multiLineBlockquote() {
         let html = MarkdownParser().html(from: """
         > One
         > Two
         > Three
         """)
 
-        XCTAssertEqual(html, "<blockquote><p>One Two Three</p></blockquote>")
+        #expect(html == "<blockquote><p>One Two Three</p></blockquote>")
     }
 
-    func testEscapingSymbolsWithBackslash() {
+    @Test func escapingSymbolsWithBackslash() {
         let html = MarkdownParser().html(from: """
         \\# Not a title
         \\*Not italic\\*
         """)
 
-        XCTAssertEqual(html, "<p># Not a title *Not italic*</p>")
+        #expect(html == "<p># Not a title *Not italic*</p>")
     }
 
 
-    func testListAfterFormattedText() {
+    @Test func listAfterFormattedText() {
         let html = MarkdownParser().html(from: """
             This is a test
             - One
             - Two
             """)
 
-        XCTAssertEqual(html, """
+        #expect(html == """
             <p>This is a test</p><ul><li>One</li><li>Two</li></ul>
             """)
     }
 
-    func testDoubleSpacedHardLinebreak() {
+    @Test func doubleSpacedHardLinebreak() {
         let html = MarkdownParser().html(from: "Line 1  \nLine 2")
 
-        XCTAssertEqual(html, "<p>Line 1<br>Line 2</p>")
+        #expect(html == "<p>Line 1<br>Line 2</p>")
     }
 
-    func testEscapedHardLinebreak() {
+    @Test func escapedHardLinebreak() {
         let html = MarkdownParser().html(from: "Line 1\\\nLine 2")
 
-        XCTAssertEqual(html, "<p>Line 1<br>Line 2</p>")
+        #expect(html == "<p>Line 1<br>Line 2</p>")
     }
 }
 
 extension TextFormattingTests {
-    static var allTests: Linux.TestList<TextFormattingTests> {
-        return [
-            ("testParagraph", testParagraph),
-            ("testParagraphs", testParagraphs),
-            ("testDosParagraphs", testDosParagraphs),
-            ("testItalicText", testItalicText),
-            ("testBoldText", testBoldText),
-            ("testItalicBoldText", testItalicBoldText),
-            ("testItalicBoldTextWithSeparateStartMarkers", testItalicBoldTextWithSeparateStartMarkers),
-            ("testItalicTextWithinBoldText", testItalicTextWithinBoldText),
-            ("testBoldTextWithinItalicText", testBoldTextWithinItalicText),
-            ("testItalicTextWithExtraLeadingMarkers", testItalicTextWithExtraLeadingMarkers),
-            ("testBoldTextWithExtraLeadingMarkers", testBoldTextWithExtraLeadingMarkers),
-            ("testItalicTextWithExtraTrailingMarkers", testItalicTextWithExtraTrailingMarkers),
-            ("testBoldTextWithExtraTrailingMarkers", testBoldTextWithExtraTrailingMarkers),
-            ("testItalicBoldTextWithExtraTrailingMarkers", testItalicBoldTextWithExtraTrailingMarkers),
-            ("testUnterminatedItalicMarker", testUnterminatedItalicMarker),
-            ("testUnterminatedBoldMarker", testUnterminatedBoldMarker),
-            ("testUnterminatedItalicBoldMarker", testUnterminatedItalicBoldMarker),
-            ("testUnterminatedItalicMarkerWithinBoldText", testUnterminatedItalicMarkerWithinBoldText),
-            ("testUnterminatedBoldMarkerWithinItalicText", testUnterminatedBoldMarkerWithinItalicText),
-            ("testStrikethroughText", testStrikethroughText),
-            ("testSingleTildeWithinStrikethroughText", testSingleTildeWithinStrikethroughText),
-            ("testUnterminatedStrikethroughMarker", testUnterminatedStrikethroughMarker),
-            ("testEncodingSpecialCharacters", testEncodingSpecialCharacters),
-            ("testSingleLineBlockquote", testSingleLineBlockquote),
-            ("testMultiLineBlockquote", testMultiLineBlockquote),
-            ("testEscapingSymbolsWithBackslash", testEscapingSymbolsWithBackslash),
-            ("testListAfterFormattedText", testListAfterFormattedText),
-            ("testDoubleSpacedHardLinebreak", testDoubleSpacedHardLinebreak),
-            ("testEscapedHardLinebreak", testEscapedHardLinebreak)
-        ]
-    }
 }

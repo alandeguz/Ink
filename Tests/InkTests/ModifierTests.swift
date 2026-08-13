@@ -1,14 +1,15 @@
 /**
 *  Ink
+*  Copyright (c) Alan DeGuzman 2026
 *  Copyright (c) John Sundell 2019
 *  MIT license, see LICENSE file for details
 */
 
-import XCTest
+import Testing
 import Ink
 
-final class ModifierTests: XCTestCase {
-    func testModifierInput() {
+struct ModifierTests {
+    @Test func modifierInput() {
         var allHTML = [String]()
         var allMarkdown = [Substring]()
 
@@ -21,12 +22,12 @@ final class ModifierTests: XCTestCase {
         ])
 
         let html = parser.html(from: "One\n\nTwo\n\nThree")
-        XCTAssertEqual(html, "<p>One</p><p>Two</p><p>Three</p>")
-        XCTAssertEqual(allHTML, ["<p>One</p>", "<p>Two</p>", "<p>Three</p>"])
-        XCTAssertEqual(allMarkdown, ["One", "Two", "Three"])
+        #expect(html == "<p>One</p><p>Two</p><p>Three</p>")
+        #expect(allHTML == ["<p>One</p>", "<p>Two</p>", "<p>Three</p>"])
+        #expect(allMarkdown == ["One", "Two", "Three"])
     }
 
-    func testInitializingParserWithModifiers() {
+    @Test func initializingParserWithModifiers() {
         let parser = MarkdownParser(modifiers: [
             Modifier(target: .links) { "LINK:" + $0.html },
             Modifier(target: .inlineCode) { _ in "<em>Replacement</em>" }
@@ -34,13 +35,11 @@ final class ModifierTests: XCTestCase {
 
         let html = parser.html(from: "Text [Link](url) `code`")
 
-        XCTAssertEqual(
-            html,
-            #"<p>Text LINK:<a href="url">Link</a> <em>Replacement</em></p>"#
-        )
+        #expect(
+            html == #"<p>Text LINK:<a href="url">Link</a> <em>Replacement</em></p>"#)
     }
 
-    func testAddingModifiers() {
+    @Test func addingModifiers() {
         var parser = MarkdownParser()
         parser.addModifier(Modifier(target: .headings) { _ in "<h1>New heading</h1>" })
         parser.addModifier(Modifier(target: .links) { "LINK:" + $0.html })
@@ -52,12 +51,12 @@ final class ModifierTests: XCTestCase {
         Text [Link](url) `code`
         """)
 
-        XCTAssertEqual(html, #"""
+        #expect(html == #"""
         <h1>New heading</h1><p>Text LINK:<a href="url">Link</a> Code</p>
         """#)
     }
 
-    func testMultipleModifiersForSameTarget() {
+    @Test func multipleModifiersForSameTarget() {
         var parser = MarkdownParser()
 
         parser.addModifier(Modifier(target: .codeBlocks) {
@@ -74,17 +73,9 @@ final class ModifierTests: XCTestCase {
         ```
         """)
 
-        XCTAssertEqual(html, "<p>Code is cool:</p><pre><code>Code\n</code></pre>")
+        #expect(html == "<p>Code is cool:</p><pre><code>Code\n</code></pre>")
     }
 }
 
 extension ModifierTests {
-    static var allTests: Linux.TestList<ModifierTests> {
-        return [
-            ("testModifierInput", testModifierInput),
-            ("testInitializingParserWithModifiers", testInitializingParserWithModifiers),
-            ("testAddingModifiers", testAddingModifiers),
-            ("testMultipleModifiersForSameTarget", testMultipleModifiersForSameTarget)
-        ]
-    }
 }
